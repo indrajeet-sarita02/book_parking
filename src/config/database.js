@@ -21,8 +21,9 @@ const config = {
     pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
   } : {
     dialect: 'sqlite',
-    storage: process.env.DB_STORAGE || (isVercel ? '/tmp/parking.db' : './database/parking.db'),
+    storage: process.env.DB_STORAGE || './database/parking.db',
     logging: false,
+    ...(isVercel ? { dialectOptions: { mode: 1 } } : {}),
   },
 };
 
