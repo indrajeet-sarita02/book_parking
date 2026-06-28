@@ -1,10 +1,14 @@
-const { initDatabase } = require('../database');
+import { initDatabase } from '../database';
 
 let initialized = false;
 
 export async function ensureDbInit() {
   if (!initialized) {
-    await initDatabase();
+    try {
+      await initDatabase();
+    } catch (err) {
+      console.error('Database init failed:', err);
+    }
     initialized = true;
   }
 }
