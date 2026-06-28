@@ -3,9 +3,11 @@ import { authController } from '@/controllers';
 import { validate } from '@/middlewares/validate';
 import { registerSchema } from '@/lib/validations/auth';
 import { errorHandler } from '../../error-handler';
+import { ensureDbInit } from '@/lib/db-init';
 
 async function handler(req) {
   try {
+    await ensureDbInit();
     const body = await req.json();
     const parsed = registerSchema.parse(body);
     req.validatedBody = parsed;

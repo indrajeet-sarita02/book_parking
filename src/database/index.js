@@ -24,11 +24,12 @@ async function initDatabase() {
   try {
     await sequelize.authenticate();
     console.log('Database connected successfully');
-    await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
-    console.log('Database synced successfully');
+    if (!process.env.VERCEL || process.env.NODE_ENV === 'development') {
+      await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
+      console.log('Database synced successfully');
+    }
   } catch (err) {
     console.error('Database sync failed:', err);
-    process.exit(1);
   }
 }
 

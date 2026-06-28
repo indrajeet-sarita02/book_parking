@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { authController } from '@/controllers';
 import { errorHandler } from '../../error-handler';
+import { loginSchema } from '@/lib/validations/auth';
+import { ensureDbInit } from '@/lib/db-init';
 
 async function handler(req) {
   try {
+    await ensureDbInit();
     const body = await req.json();
-    const { loginSchema } = require('@/lib/validations/auth');
     const parsed = loginSchema.parse(body);
     req.validatedBody = parsed;
     const result = await authController.login(req);

@@ -25,6 +25,7 @@
     "recharts": "^3.9.0",
     "sequelize": "^6.37.8",
     "sqlite3": "^5.1.7",
+    "mysql2": "^3.9.0",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
