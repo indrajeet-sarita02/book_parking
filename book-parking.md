@@ -1217,7 +1217,6 @@ exports.create = async (userId, data) => {
     "react-dom": "^19",
     "sequelize": "^6",
     "pg": "^8",
-    "mysql2": "^3",
     "pg": "^8",
     "bcryptjs": "^2",
     "jsonwebtoken": "^9",

@@ -5,11 +5,9 @@ let initialized = false;
 async function initDatabase() {
   try {
     await sequelize.authenticate();
-    if (!process.env.VERCEL || process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
-    }
+    console.log('Database connected');
   } catch (err) {
-    console.error('Database sync failed:', err);
+    console.error('Database connection failed:', err);
   }
 }
 

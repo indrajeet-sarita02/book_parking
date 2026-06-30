@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['sequelize', 'pg', 'mysql2'],
+    serverComponentsExternalPackages: ['sequelize', 'pg'],
   },
 };
 
