@@ -4,7 +4,7 @@
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 13.5 (App Router) |
 | Language | JavaScript |
 | ORM | Sequelize 6 |
 | Database | PostgreSQL |
@@ -780,11 +780,11 @@ export const createBookingSchema = z.object({
 ```js
 // config/database.js
 const { Sequelize } = require('sequelize');
-
-const env = process.env.NODE_ENV || 'development';
+const pg = require('pg');
 
 const dbConfig = {
   dialect: 'postgres',
+  dialectModule: pg,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT) || 5432,
   database: process.env.DB_NAME,
@@ -814,7 +814,6 @@ const ParkingSlot = require('../models/ParkingSlot');
 const Booking = require('../models/Booking');
 const Payment = require('../models/Payment');
 
-// Define associations
 User.hasMany(Booking, { foreignKey: 'user_id' });
 Booking.belongsTo(User, { foreignKey: 'user_id' });
 
@@ -833,11 +832,13 @@ Payment.belongsTo(Booking, { foreignKey: 'booking_id' });
 async function initDatabase() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
-    console.log('Database synced successfully');
+    console.log('Database connected successfully');
+    if (!process.env.VERCEL || process.env.NODE_ENV === 'development') {
+      await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
+      console.log('Database synced successfully');
+    }
   } catch (err) {
     console.error('Database sync failed:', err);
-    process.exit(1);
   }
 }
 
@@ -1212,36 +1213,33 @@ exports.create = async (userId, data) => {
 ```json
 {
   "dependencies": {
-    "next": "^15",
-    "react": "^19",
-    "react-dom": "^19",
-    "sequelize": "^6",
-    "pg": "^8",
-    "pg": "^8",
-    "bcryptjs": "^2",
-    "jsonwebtoken": "^9",
-    "zod": "^3",
-    "zustand": "^4",
-    "date-fns": "^3",
-    "qrcode": "^1",
-    "jspdf": "^2",
-    "html2canvas": "^1",
-    "recharts": "^2",
-    "react-hook-form": "^7",
-    "@hookform/resolvers": "^3",
-    "lucide-react": "^0.400",
-    "next-themes": "^0.3",
-    "clsx": "^2",
-    "tailwind-merge": "^2",
-    "class-variance-authority": "^0.7"
+    "next": "^13.4.19",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sequelize": "^6.37.8",
+    "pg": "^8.22.0",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14",
+    "date-fns": "^4.4.0",
+    "qrcode": "^1.5.4",
+    "dotenv": "^17.4.2",
+    "recharts": "^3.9.0",
+    "react-hook-form": "^7.80.0",
+    "@hookform/resolvers": "^5.4.0",
+    "lucide-react": "^1.21.0",
+    "next-themes": "^0.4.6",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0",
+    "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
-    "tailwindcss": "^3",
-    "autoprefixer": "^10",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.5.2",
     "postcss": "^8",
-    "@tailwindcss/forms": "^0.5",
     "eslint": "^8",
-    "eslint-config-next": "^15"
+    "eslint-config-next": "14.2.35"
   }
 }
 ```
