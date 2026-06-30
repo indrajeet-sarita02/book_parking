@@ -7,7 +7,7 @@
 | Framework | Next.js 15 (App Router) |
 | Language | JavaScript |
 | ORM | Sequelize 6 |
-| Database | SQLite (dev), MySQL/PostgreSQL (prod) |
+| Database | PostgreSQL |
 | Auth | JWT + HttpOnly Cookies |
 | Validation | Zod |
 | State | Zustand (global), React Context (theme/auth) |
@@ -299,8 +299,8 @@ module.exports = (sequelize, DataTypes) => {
     address:       { type: DataTypes.TEXT },
     city:          { type: DataTypes.STRING(100), allowNull: false },
     state:         { type: DataTypes.STRING(100), allowNull: false },
-    latitude:      { type: DataTypes.FLOAT(10, 7) },
-    longitude:     { type: DataTypes.FLOAT(10, 7) },
+    latitude:      { type: DataTypes.DOUBLE },
+    longitude:     { type: DataTypes.DOUBLE },
     opening_time:  { type: DataTypes.TIME, defaultValue: '00:00:00' },
     closing_time:  { type: DataTypes.TIME, defaultValue: '23:59:00' },
     total_slots:   { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -650,7 +650,7 @@ export async function generateBookingNumber() {
   const dateStr = `${yy}${mm}${dd}`;
 
   const [result] = await sequelize.query(
-    `SELECT COUNT(*) as count FROM bookings WHERE DATE(created_at) = CURDATE()`
+    `SELECT COUNT(*) as count FROM bookings WHERE created_at::date = CURRENT_DATE`
   );
   const seq = String(Number(result[0]?.count || 0) + 1).padStart(4, '0');
 
@@ -782,25 +782,25 @@ export const createBookingSchema = z.object({
 const { Sequelize } = require('sequelize');
 
 const env = process.env.NODE_ENV || 'development';
-const config = {
-  development: {
-    dialect: 'sqlite',
-    storage: process.env.DB_STORAGE || './database/parking.db',
-    logging: false,
-  },
-  production: {
-    dialect: process.env.DB_DIALECT || 'mysql',
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    logging: false,
-    pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+
+const dbConfig = {
+  dialect: 'postgres',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT) || 5432,
+  database: process.env.DB_NAME,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  logging: false,
+  pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   },
 };
 
-const sequelize = new Sequelize(config[env]);
+const sequelize = new Sequelize(dbConfig);
 
 module.exports = sequelize;
 ```
@@ -985,7 +985,7 @@ export function DataTable({
 
 ### Phase 1 — Foundation
 - [ ] `npx create-next-app@latest parking-system --js --tailwind --app`
-- [ ] Install deps: `sequelize sqlite3 bcryptjs jsonwebtoken zod zustand date-fns qrcode recharts @radix-ui/*`
+- [ ] Install deps: `sequelize pg bcryptjs jsonwebtoken zod zustand date-fns qrcode recharts @radix-ui/*`
 - [ ] Init shadcn: `npx shadcn@latest init`
 - [ ] Set up `config/database.js` + `database/index.js` + models
 - [ ] Create `.env` + `.env.example`
@@ -1216,7 +1216,7 @@ exports.create = async (userId, data) => {
     "react": "^19",
     "react-dom": "^19",
     "sequelize": "^6",
-    "sqlite3": "^5",
+    "pg": "^8",
     "mysql2": "^3",
     "pg": "^8",
     "bcryptjs": "^2",

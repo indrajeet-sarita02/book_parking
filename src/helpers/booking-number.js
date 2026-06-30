@@ -8,7 +8,7 @@ async function generateBookingNumber() {
   const dd = String(date.getDate()).padStart(2, '0');
   const dateStr = `${yy}${mm}${dd}`;
 
-  const query = `SELECT COUNT(*) as count FROM bookings WHERE date(created_at) = date('now')`;
+  const query = `SELECT COUNT(*) as count FROM bookings WHERE created_at::date = CURRENT_DATE`;
   const [result] = await sequelize.query(query);
   const seq = String(Number(result[0]?.count || 0) + 1).padStart(4, '0');
 
