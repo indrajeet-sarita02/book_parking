@@ -23,10 +23,10 @@ const Location = sequelize.define('Location', {
     allowNull: false,
   },
   latitude: {
-    type: DataTypes.FLOAT(10, 7),
+    type: DataTypes.DOUBLE,
   },
   longitude: {
-    type: DataTypes.FLOAT(10, 7),
+    type: DataTypes.DOUBLE,
   },
   opening_time: {
     type: DataTypes.TIME,

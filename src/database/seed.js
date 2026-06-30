@@ -1,3 +1,4 @@
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const { sequelize, User, Location, ParkingSlot, Booking, Payment } = require('./index');
 
